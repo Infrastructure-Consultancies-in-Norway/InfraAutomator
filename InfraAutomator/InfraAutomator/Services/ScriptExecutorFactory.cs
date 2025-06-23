@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using InfraAutomator.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InfraAutomator.Services
 {
@@ -10,11 +11,16 @@ namespace InfraAutomator.Services
     {
         private readonly ILogger<ScriptExecutorFactory> _logger;
         private readonly PythonRuntime _pythonRuntime;
+        private readonly IServiceProvider _serviceProvider;
         
-        public ScriptExecutorFactory(ILogger<ScriptExecutorFactory> logger, PythonRuntime pythonRuntime)
+        public ScriptExecutorFactory(
+            ILogger<ScriptExecutorFactory> logger, 
+            PythonRuntime pythonRuntime,
+            IServiceProvider serviceProvider)
         {
             _logger = logger;
             _pythonRuntime = pythonRuntime;
+            _serviceProvider = serviceProvider;
         }
         
         public async Task<object> ExecuteAsync(string scriptPath, Dictionary<string, string> parameters)
@@ -48,14 +54,15 @@ namespace InfraAutomator.Services
             return Task.FromResult<object>("Python script executed successfully");
         }
         
-        private Task<object> ExecuteCSharpScriptAsync(string scriptPath, Dictionary<string, string> parameters)
+        private async Task<object> ExecuteCSharpScriptAsync(string scriptPath, Dictionary<string, string> parameters)
         {
             _logger.LogInformation($"Executing C# script: {scriptPath}");
             
-            // C# script execution is not yet implemented
-            _logger.LogWarning("C# script execution is not yet implemented");
+            // Get the C# script executor from the service provider
+            var csharpExecutor = _serviceProvider.GetRequiredService<CSharpScriptExecutor>();
             
-            return Task.FromResult<object>("C# script execution not implemented");
+            // Execute the script
+            return await csharpExecutor.ExecuteAsync(scriptPath, parameters);
         }
     }
 }

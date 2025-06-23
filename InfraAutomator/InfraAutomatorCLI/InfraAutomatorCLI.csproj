@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Examples\Scripts\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\InfraAutomator\InfraAutomator.csproj" />
   </ItemGroup>
 

@@ -89,6 +89,8 @@ namespace InfraAutomatorCLI
             services.AddSingleton<IScriptExecutor, ScriptExecutorFactory>();
             services.AddSingleton<IApplicationRunner, ApplicationRunner>();
             services.AddSingleton<PythonRuntime>();
+            services.AddSingleton<CSharpScriptExecutor>();
+
 
             return services.BuildServiceProvider();
         }
