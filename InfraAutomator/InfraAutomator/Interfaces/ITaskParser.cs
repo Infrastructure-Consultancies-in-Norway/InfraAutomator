@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using InfraAutomatorCLI.Models;
+using InfraAutomator.Models;
 
-namespace InfraAutomatorCLI.Interfaces
+namespace InfraAutomator.Interfaces
 {
     public interface ITaskParser
     {

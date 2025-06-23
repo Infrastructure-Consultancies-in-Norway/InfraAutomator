@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace InfraAutomatorCLI.Models
+namespace InfraAutomator.Models
 {
     public class AutomationTask
     {

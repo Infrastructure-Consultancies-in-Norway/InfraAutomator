@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace InfraAutomatorCLI.Interfaces
+namespace InfraAutomator.Interfaces
 {
     public interface IApplicationRunner
     {

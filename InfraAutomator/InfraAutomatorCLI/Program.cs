@@ -3,13 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using InfraAutomatorCLI.Extensions;
-using InfraAutomatorCLI.Interfaces;
-using InfraAutomatorCLI.Services;
+using InfraAutomator.Interfaces;
+using InfraAutomator.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace InfraAutomatorCLI
 {

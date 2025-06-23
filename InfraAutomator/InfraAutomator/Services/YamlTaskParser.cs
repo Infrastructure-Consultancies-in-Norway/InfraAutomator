@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using InfraAutomatorCLI.Interfaces;
-using InfraAutomatorCLI.Models;
+using InfraAutomator.Interfaces;
+using InfraAutomator.Models;
 using Microsoft.Extensions.Logging;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace InfraAutomatorCLI.Services
+namespace InfraAutomator.Services
 {
     public class YamlTaskParser : ITaskParser
     {

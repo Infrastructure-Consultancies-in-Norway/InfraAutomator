@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using InfraAutomatorCLI.Interfaces;
-using InfraAutomatorCLI.Models;
+using InfraAutomator.Interfaces;
+using InfraAutomator.Models;
 using Microsoft.Extensions.Logging;
 
-namespace InfraAutomatorCLI.Services
+namespace InfraAutomator.Services
 {
     public class TaskRunner
     {
@@ -52,17 +52,20 @@ namespace InfraAutomatorCLI.Services
                             
                         default:
                             _logger.LogWarning($"Unknown step type: {step.Type}");
+                            Console.WriteLine($"Unknown step type: {step.Type}");
                             break;
                     }
-                    
-                    _logger.LogInformation($"Step {step.Name} completed");
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"Error executing step: {step.Name}");
-                    throw;
+                    Console.WriteLine($"Error: {ex.Message}");
+                    // By default, we continue to the next step after an error
+                    // Could add step-level or task-level configuration for error handling
                 }
             }
+            
+            _logger.LogInformation("Task execution completed");
         }
     }
 }

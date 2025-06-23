@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using InfraAutomatorCLI.Interfaces;
+using InfraAutomator.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace InfraAutomatorCLI.Services
+namespace InfraAutomator.Services
 {
     public class ScriptExecutorFactory : IScriptExecutor
     {
@@ -48,21 +48,14 @@ namespace InfraAutomatorCLI.Services
             return Task.FromResult<object>("Python script executed successfully");
         }
         
-        private async Task<object> ExecuteCSharpScriptAsync(string scriptPath, Dictionary<string, string> parameters)
+        private Task<object> ExecuteCSharpScriptAsync(string scriptPath, Dictionary<string, string> parameters)
         {
             _logger.LogInformation($"Executing C# script: {scriptPath}");
             
-            // We'll need to use Roslyn scripting for this
-            // For now, this is a placeholder implementation
-            string scriptContent = await System.IO.File.ReadAllTextAsync(scriptPath);
+            // C# script execution is not yet implemented
+            _logger.LogWarning("C# script execution is not yet implemented");
             
-            // In a real implementation, we'd use Microsoft.CodeAnalysis.CSharp.Scripting
-            // to compile and run the script with the provided parameters
-            
-            _logger.LogInformation("C# script execution is not fully implemented yet");
-            
-            // Placeholder for actual implementation
-            return "C# script execution result";
+            return Task.FromResult<object>("C# script execution not implemented");
         }
     }
 }
