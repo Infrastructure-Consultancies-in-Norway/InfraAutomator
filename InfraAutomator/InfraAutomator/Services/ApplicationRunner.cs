@@ -160,8 +160,22 @@ namespace InfraAutomator.Services
             
             var stdout = await process.StandardOutput.ReadToEndAsync();
             var stderr = await process.StandardError.ReadToEndAsync();
-            
-            await process.WaitForExitAsync();
+
+            if (!parameters.TryGetValue("await", out var awaitProcessStr) || 
+                !bool.TryParse(awaitProcessStr, out var awaitProcess))
+            {
+                awaitProcess = true; // Default to waiting for the process to exit
+            }
+
+            if (awaitProcess)
+            {
+                await process.WaitForExitAsync();
+            }
+            else
+            {
+                _logger.LogInformation($"Not waiting for process to complete as await=false");
+                return true; // Return success since we're not waiting for the process
+            }
             
             if (!string.IsNullOrEmpty(stdout))
             {

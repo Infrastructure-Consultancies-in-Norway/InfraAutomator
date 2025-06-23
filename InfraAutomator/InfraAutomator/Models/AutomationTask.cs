@@ -12,7 +12,7 @@ namespace InfraAutomator.Models
 
     public class TaskStep
     {
-        public string Type { get; set; } // Application, PythonScript, CSharpScript
+        public string Type { get; set; } // Application, PythonScript, CSharpScript, Process
         public string Name { get; set; }
         public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
     }

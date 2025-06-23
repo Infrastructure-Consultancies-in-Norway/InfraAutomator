@@ -2,7 +2,7 @@
   "profiles": {
     "InfraAutomatorCLI": {
       "commandName": "Project",
-      "commandLineArgs": "E:\\Github\\InfraAutomator\\InfraAutomator\\InfraAutomatorCLI\\Examples\\sample-python-task.yaml"
+      "commandLineArgs": "E:\\Github\\InfraAutomator\\InfraAutomator\\InfraAutomatorCLI\\Examples\\sample-task.yaml"
     }
   }
 }
