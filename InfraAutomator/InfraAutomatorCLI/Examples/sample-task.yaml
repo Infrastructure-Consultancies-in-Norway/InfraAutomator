@@ -1,0 +1,30 @@
+name: Sample Bridge Automation Task
+description: This task demonstrates how to automate applications and run scripts
+
+steps:
+  - type: Application
+    name: Tekla
+    parameters:
+      modelPath: "C:\Projects\MyModel.db1"
+      operation: "OpenModel"
+  
+  - type: PythonScript
+    name: ExportIFC
+    parameters:
+      scriptPath: "C:\Scripts\export_ifc.py"
+      modelName: "MyModel"
+      outputPath: "C:\Output\MyModel.ifc"
+  
+  - type: Application
+    name: Solibri
+    parameters:
+      executablePath: "C:\Program Files\Solibri\launcher.exe"
+      arguments: "--open \"C:\Output\MyModel.ifc\""
+      waitForExit: "false"
+  
+  - type: CSharpScript
+    name: GenerateReport
+    parameters:
+      scriptPath: "C:\Scripts\generate_report.cs"
+      inputFile: "C:\Output\analysis_results.xml"
+      outputFile: "C:\Output\final_report.pdf"

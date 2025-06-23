@@ -1,0 +1,9 @@
+name: Sample Python Task
+description: This task demonstrates run a python scripts
+
+steps:
+  - type: PythonScript
+    name: Python Script Example
+    parameters:
+      scriptPath: E:\Github\InfraAutomator\InfraAutomator\InfraAutomatorCLI\Examples\Scripts\py_example.py
+  
