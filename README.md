@@ -9,7 +9,6 @@ InfraAutomator is a flexible automation tool designed to execute sequences of ta
 - [Task Configuration](#task-configuration)
 - [Creating C# Scripts](#creating-c-scripts)
 - [Creating Python Scripts](#creating-python-scripts)
-- [Examples](#examples)
 
 ## InfraAutomator Library
 
