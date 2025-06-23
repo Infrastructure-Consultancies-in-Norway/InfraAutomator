@@ -1,0 +1,13 @@
+# Explicitly define language for certain file types
+*.cs linguist-language=C#
+*.csproj linguist-language=XML
+
+# Mark the embedded Python directory as vendored (excluded from language statistics)
+python-embed-amd64/** linguist-vendored=true
+**/python-embed-amd64/** linguist-vendored=true
+
+# Additional exclusions for common binary and generated files
+*.dll linguist-vendored=true
+*.exe linguist-vendored=true
+*.pyd linguist-vendored=true
+*.pyc linguist-vendored=true
