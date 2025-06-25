@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+	<AssemblyName>InfraAutomatorWpf</AssemblyName>
+	<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>0.0.1</Version>
+	<Authors>InfraAutomator Team</Authors>
+    <Company>InfraAutomator</Company>
+    <Description>A WPF application for InfraAutomator tasks.</Description>
   </PropertyGroup>
 
   <ItemGroup>

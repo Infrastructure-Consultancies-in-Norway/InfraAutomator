@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WpfUtilities.Utils;
 
@@ -15,10 +17,38 @@ namespace InfraAutomatorWpf.ViewModels
 {
     public class MainViewModel : NotifierBase
     {
+
+        private const string _applicationName = "InfraAutomator";
+        private string _applicationVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
+        private string _assemblyVersion;
+        public string AssemblyVersion 
+        { 
+            get => _assemblyVersion; 
+            set => SetNotify(ref _assemblyVersion, value); 
+        }
+
+
         // Create a singleton of ApplicationRunner
         private readonly ILogger<MainViewModel> _logger;
-
         private readonly IApplicationRunner _applicationRunner;
+        private readonly TaskRunner _taskRunner;
+        private readonly ITaskParser _taskParser;
+        private readonly IScriptExecutor _scriptExecutor;
+
+        #region Properties for YAML Task Automation
+
+        private string _yamlFilePath;
+        public string YamlFilePath
+        {
+            get => _yamlFilePath;
+            set => SetNotify(ref _yamlFilePath, value);
+        }
+
+        public ICommand BrowseYamlFileCommand => new RelayCommand(_ => BrowseYamlFile());
+        public ICommand RunTaskCommand => new AsyncRelayCommand(RunYamlTaskAsync, CanRunTask);
+
+        #endregion
 
         private string _inputFilePath;
         public string InputFilePath
@@ -58,16 +88,64 @@ namespace InfraAutomatorWpf.ViewModels
 #if DEBUG
             InputFilePath = @"C:\Users\fkjn\Downloads\SOS_10LJA_F_KON_TESTING.pdf";
             OutputFilePath = @"C:\Users\fkjn\Downloads";
+            YamlFilePath = @"E:\Github\InfraAutomator\InfraAutomator\InfraAutomatorCLI\Examples\sample-task.yaml";
+            CanRunTask();
 #endif
+
+            // Initialize the assembly version
+            // Get the three-part version number from the assembly
+            _assemblyVersion = $"{_applicationName} Version: {_applicationVersion}";
 
 
             var serviceProvider = ConfigureServices();
             _applicationRunner = serviceProvider.GetRequiredService<IApplicationRunner>();
             _logger = serviceProvider.GetRequiredService<ILogger<MainViewModel>>();
+            _taskParser = serviceProvider.GetRequiredService<ITaskParser>();
+            //_scriptExecutor = serviceProvider.GetRequiredService<IScriptExecutor>();
+            _taskRunner = serviceProvider.GetRequiredService<TaskRunner>();
 
             // Default values
             SelectedOutputFormat = OutputFormats[0]; // Default to first item
         }
+
+        #region YAML Task Methods
+
+        private void BrowseYamlFile()
+        {
+            // Use a file dialog to select a YAML file
+            //var yamlFilter = "YAML Files (*.yaml;*.yml)|*.yaml;*.yml|All Files (*.*)|*.*";
+            string filePath = Common.OpenFileDialogPath("yaml", 
+                              Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                YamlFilePath = filePath;
+            }
+        }
+
+        private bool CanRunTask()
+        {
+            return !string.IsNullOrEmpty(YamlFilePath) && File.Exists(YamlFilePath);
+        }
+
+        private async Task RunYamlTaskAsync()
+        {
+            try
+            {
+                _logger.LogInformation($"Starting execution of YAML task: {YamlFilePath}");
+                await _taskRunner.ExecuteTaskFromFileAsync(YamlFilePath);
+                _logger.LogInformation("Task execution completed successfully");
+                MessageBox.Show("Task execution completed successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during task execution");
+                //Console.WriteLine($"Error: {ex.Message}");
+                // You could add UI-specific error handling here, like showing a message box
+                MessageBox.Show($"Error: {ex.Message}", "Task Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        #endregion
 
         private void BrowseInputFile()
         {
@@ -117,21 +195,6 @@ namespace InfraAutomatorWpf.ViewModels
                 arguments.Append($"-o ");
                 arguments.Append($"{OutputFilePath}\\{outputFileNameWithoutExtension}.{SelectedOutputFormat}");
 
-
-
-                //var process = new Process();
-                //process.StartInfo.FileName = markitdownPath;
-                //process.StartInfo.Arguments = arguments.ToString();
-                //process.StartInfo.UseShellExecute = false;
-                //process.StartInfo.RedirectStandardOutput = true;
-                //process.StartInfo.RedirectStandardError = true;
-                //process.Start();
-
-                //// Read the output synchronously - be careful with large outputs
-                //string output = process.StandardOutput.ReadToEnd();
-                //string error = process.StandardError.ReadToEnd();
-                //process.WaitForExit();
-
                 var result = _applicationRunner.RunApplicationAsync(
                     markitdownPath,
                     new Dictionary<string, string>
@@ -142,11 +205,22 @@ namespace InfraAutomatorWpf.ViewModels
                         { "redirStdOut", "false" }
                     }).GetAwaiter().GetResult();
 
+                if (result)
+                {
+                    _logger.LogInformation($"File converted successfully to {SelectedOutputFormat} format.");
+                    MessageBox.Show($"File converted successfully to {SelectedOutputFormat} format.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    _logger.LogError("File conversion failed.");
+                    MessageBox.Show("File conversion failed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
                 // Handle exceptions appropriately
-                Console.WriteLine($"Error during conversion: {ex.Message}");
+                _logger.LogError(ex, "An error occurred during file conversion");
+                MessageBox.Show($"Error: {ex.Message}", "File Conversion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -162,10 +236,14 @@ namespace InfraAutomatorWpf.ViewModels
             });
 
             // Register services
+            services.AddSingleton<ITaskParser, YamlTaskParser>();
+            services.AddSingleton<TaskRunner>();
+            services.AddSingleton<IScriptExecutor, ScriptExecutorFactory>();
             services.AddSingleton<IApplicationRunner, ApplicationRunner>();
+            services.AddSingleton<PythonRuntime>();
+            services.AddSingleton<CSharpScriptExecutor>();
 
             return services.BuildServiceProvider();
         }
-
     }
 }
