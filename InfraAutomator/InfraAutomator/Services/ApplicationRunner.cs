@@ -134,12 +134,33 @@ namespace InfraAutomator.Services
                 _logger.LogError($"Application not found: {appPath}");
                 return false;
             }
-            
+
+            var redirStdOut = true; // Default to true if not specified
+            if (parameters.TryGetValue("redirStdOut", out var redirStdOutStr))
+            {
+                // parse the redirStdOut to a boolean value
+                if (bool.TryParse(redirStdOutStr, out redirStdOut))
+                {
+                    _logger.LogError($"Invalid value for redirStdOut: {redirStdOutStr}");
+                }
+            }
+
+            var redirStdErr = true; // Default to true if not specified
+            if (parameters.TryGetValue("redirStdErr", out var redirStdErrStr))
+            {
+                // parse the redirStdOut to a boolean value
+                if (bool.TryParse(redirStdErrStr, out redirStdOut))
+                {
+                    _logger.LogError($"Invalid value for redirStdOut: {redirStdErrStr}");
+                }
+            }
+
+
             var processStartInfo = new ProcessStartInfo
             {
                 FileName = appPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
+                RedirectStandardOutput = redirStdOut,
+                RedirectStandardError = redirStdErr,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };

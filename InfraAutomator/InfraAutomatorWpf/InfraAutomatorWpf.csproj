@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InfraAutomatorCLI\InfraAutomatorCLI.csproj" />
+    <ProjectReference Include="..\InfraAutomator\InfraAutomator.csproj" />
+    <ProjectReference Include="C:\COWIDev\Github\WpfUtilities\WpfUtilities.csproj" />
+  </ItemGroup>
+
+  <Target Name="CopyPythonRuntime" AfterTargets="Build">
+    <!-- Create destination directory structure first -->
+    <MakeDir Directories="$(OutputPath)\python-embed-amd64" />
+    
+    <!-- Copy files with SkipUnchangedFiles to improve build performance -->
+    <ItemGroup>
+      <PythonRuntimeFiles Include="..\InfraAutomator\python-embed-amd64\**\*.*" />
+    </ItemGroup>
+    
+    <!-- Create all necessary directories before copying -->
+    <MakeDir 
+      Directories="@(PythonRuntimeFiles->'$(OutputPath)\python-embed-amd64\%(RecursiveDir)')" 
+      Condition="!Exists('$(OutputPath)\python-embed-amd64\%(RecursiveDir)')" />
+      
+    <!-- Copy the files -->
+    <Copy 
+      SourceFiles="@(PythonRuntimeFiles)" 
+      DestinationFiles="@(PythonRuntimeFiles->'$(OutputPath)\python-embed-amd64\%(RecursiveDir)%(Filename)%(Extension)')" 
+      SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
