@@ -178,7 +178,17 @@ namespace InfraAutomator.Services
             }
             
             var process = Process.Start(processStartInfo);
-            
+
+            string stdout = string.Empty;
+            string stderr = string.Empty;
+            if (redirStdOut)
+            {
+                stdout = await process.StandardOutput.ReadToEndAsync();
+            }
+            if (redirStdErr)
+            {
+                stderr = await process.StandardError.ReadToEndAsync();
+            }
             //var stdout = await process.StandardOutput.ReadToEndAsync();
             //var stderr = await process.StandardError.ReadToEndAsync();
 
