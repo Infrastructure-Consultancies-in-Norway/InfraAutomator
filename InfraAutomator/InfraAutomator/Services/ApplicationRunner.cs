@@ -179,8 +179,8 @@ namespace InfraAutomator.Services
             
             var process = Process.Start(processStartInfo);
             
-            var stdout = await process.StandardOutput.ReadToEndAsync();
-            var stderr = await process.StandardError.ReadToEndAsync();
+            //var stdout = await process.StandardOutput.ReadToEndAsync();
+            //var stderr = await process.StandardError.ReadToEndAsync();
 
             if (!parameters.TryGetValue("await", out var awaitProcessStr) || 
                 !bool.TryParse(awaitProcessStr, out var awaitProcess))
