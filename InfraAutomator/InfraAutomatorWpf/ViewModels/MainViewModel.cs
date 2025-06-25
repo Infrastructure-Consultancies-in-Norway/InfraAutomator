@@ -81,7 +81,7 @@ namespace InfraAutomatorWpf.ViewModels
 
         public ICommand BrowseInputFileCommand => new RelayCommand(_ => BrowseInputFile());
         public ICommand BrowseOutputFileCommand => new RelayCommand(_ => BrowseOutputFile());
-        public ICommand ConvertCommand => new RelayCommand(_ => ConvertFile(), _ => CanConvert());
+        public ICommand ConvertCommand => new AsyncRelayCommand(ConvertFile, CanConvert);
 
         public MainViewModel()
         {
@@ -172,7 +172,7 @@ namespace InfraAutomatorWpf.ViewModels
                    !string.IsNullOrEmpty(SelectedOutputFormat);
         }
 
-        private void ConvertFile()
+        private async Task ConvertFile()
         {
             // Here you would call the markitdown.exe application with the parameters
             // This is a placeholder for the actual implementation
@@ -195,7 +195,7 @@ namespace InfraAutomatorWpf.ViewModels
                 arguments.Append($"-o ");
                 arguments.Append($"{OutputFilePath}\\{outputFileNameWithoutExtension}.{SelectedOutputFormat}");
 
-                var result = _applicationRunner.RunApplicationAsync(
+                var result = await _applicationRunner.RunApplicationAsync(
                     markitdownPath,
                     new Dictionary<string, string>
                     {
@@ -203,7 +203,7 @@ namespace InfraAutomatorWpf.ViewModels
                         { "arguments", arguments.ToString()},
                         { "redirStdErr", "false" },
                         { "redirStdOut", "false" }
-                    }).GetAwaiter().GetResult();
+                    });
 
                 if (result)
                 {
